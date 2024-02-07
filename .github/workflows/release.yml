@@ -1,0 +1,25 @@
+name: Release
+
+on: 
+    push:
+        tags:
+            - "**"
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Prepare buildenv
+              run: sudo apt install -y autopoint texi2html texlive-base
+
+            - name: Create dist tarball
+              run: sh ./ChangeLog-from-git . && ./autogen.sh && ./configure && make dist
+
+            - name: Release
+              uses: softprops/action-gh-release@v1
+              if: startsWith(github.ref, 'refs/tags/')
+              with:
+                files: "*.tar.gz"

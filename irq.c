@@ -2,6 +2,7 @@
  * libuio - UserspaceIO helper library
  *
  * Copyright (C) 2011 Benedikt Spranger
+ * Copyright (C) 2024 Manuel Traut <manut@mecka.net>
  * based on libUIO by Hans J. Koch
  *
  * This library is free software; you can redistribute it and/or
@@ -19,8 +20,10 @@
  */
 
 #include <dirent.h>
+#include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,7 +50,7 @@
  */
 int uio_enable_irq (struct uio_info_t* info)
 {
-	unsigned long tmp = 1;
+	uint32_t tmp = 1;
 
 	if (!info || info->fd == -1)
 	{
@@ -56,6 +59,7 @@ int uio_enable_irq (struct uio_info_t* info)
 		return -1;
 	}
 
+	tmp = htole32(tmp);
 	return (write (info->fd, &tmp, 4) == 4) ? 0 : -1;
 }
 
@@ -66,7 +70,7 @@ int uio_enable_irq (struct uio_info_t* info)
  */
 int uio_disable_irq (struct uio_info_t* info)
 {
-	unsigned long tmp = 0;
+	uint32_t tmp = 0;
 
 	if (!info || info->fd == -1)
 	{
@@ -75,6 +79,7 @@ int uio_disable_irq (struct uio_info_t* info)
 		return -1;
 	}
 
+	tmp = htole32(tmp);
 	return (write (info->fd, &tmp, 4) == 4) ? 0 : -1;
 }
 
@@ -86,7 +91,7 @@ int uio_disable_irq (struct uio_info_t* info)
  */
 int uio_irqwait_timeout (struct uio_info_t* info, struct timeval *timeout)
 {
-	unsigned long dummy;
+	uint32_t dummy;
 	int ret;
 
 	if (!info || info->fd == -1)

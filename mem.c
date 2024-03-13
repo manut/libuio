@@ -19,6 +19,7 @@
  */
 
 #include <dirent.h>
+#include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
@@ -194,6 +195,7 @@ int uio_read16 (struct uio_info_t* info, int map_num, unsigned long offset,
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*val = *(volatile uint16_t *) ptr;
+	*val = htole16(*val);
 
 	return 0;
 }
@@ -217,6 +219,7 @@ int uio_read32 (struct uio_info_t* info, int map_num, unsigned long offset,
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*val = *(volatile uint32_t *) ptr;
+	*val = htole32(*val);
 
 	return 0;
 }
@@ -240,6 +243,7 @@ int uio_read64 (struct uio_info_t* info, int map_num, unsigned long offset,
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
 	*val = *(volatile uint64_t *) ptr;
+	*val = htole64(*val);
 
 	return 0;
 }
@@ -285,6 +289,7 @@ int uio_write16 (struct uio_info_t* info, int map_num, unsigned long offset,
 
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
+	val = htole16(val);
 	*(volatile uint16_t *) ptr = val;
 
 	return 0;
@@ -308,6 +313,7 @@ int uio_write32 (struct uio_info_t* info, int map_num, unsigned long offset,
 
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
+	val = htole32(val);
 	*(volatile uint32_t *) ptr = val;
 
 	return 0;
@@ -331,6 +337,7 @@ int uio_write64 (struct uio_info_t* info, int map_num, unsigned long offset,
 
 	ptr = info->maps [map_num].map + info->maps [map_num].offset + offset;
 
+	val = htole64(val);
 	*(volatile uint64_t *) ptr = val;
 
 	return 0;
